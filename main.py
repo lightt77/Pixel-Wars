@@ -4,26 +4,26 @@ import sys
 
 class Bullet:
     def __init__(self,id,screen):
-        self.id=id
-        self.speed=SPEED+1
-        self.direction=[0,0]
-        self.pos=[GAME_WIDTH+1,GAME_HEIGHT+1]
+        self.id=id										#player id
+        self.speed=SPEED+1								#slightly greater speed than that of players			
+        self.direction=[0,0]							#initially at rest
+        self.pos=[GAME_WIDTH+1,GAME_HEIGHT+1]			#starting position of of arena
         self.screen=screen
         if(self.id==1):
             self.colour=PLAYER1_COLOUR
-            self.direction[0]=1
+            self.direction[0]=1							#bullet moves rightwards from player 1
         if(self.id==2):
-            self.colour=PLAYER2_COLOUR
-            self.direction[0]=-1
+            self.colour=PLAYER2_COLOUR					
+            self.direction[0]=-1						#moves leftwards from player 2
 
-    def render(self):
+    def render(self):									#displays the bullet
         if(self.id==1):
             offset=-10
         else:
             offset=10
         pygame.draw.line(self.screen,self.colour,(self.pos[0],self.pos[1]),(self.pos[0]+offset,self.pos[1]))
 
-    def update(self):
+    def update(self):									#moves the bullet
         self.pos[0]+=self.speed*self.direction[0]
         self.pos[1]+=self.speed*self.direction[1]
 
@@ -33,19 +33,19 @@ class Player:
         self.screen=screen
         self.id=id
         self.speed=speed
-        self.bullet=Bullet(self.id,self.screen)
+        self.bullet=Bullet(self.id,self.screen)			#bullet object
         if(self.id==1):
             self.pos=[GAME_WIDTH/4,GAME_HEIGHT/2]
         if(self.id==2):
             self.pos=[GAME_WIDTH*(3/4),GAME_HEIGHT/2]
-        self.direction=[0,0]
-        self.BULLETFIRED=False
-        self.hp=1
+        self.direction=[0,0]							#player initially at rest
+        self.BULLETFIRED=False							#flag to check if bullet fired is relevant i.e in the arena
+        self.hp=100										#healthpoints
 
     def render(self):
         pygame.draw.rect(self.screen,self.colour,[self.pos[0],self.pos[1],PLAYER_WIDTH,PLAYER_WIDTH])
         if(self.BULLETFIRED):
-            self.bullet.render()
+            self.bullet.render()						#render only if bullet flag is set
         #self.direction[0]=0
         #self.direction[1]=0
 
@@ -53,7 +53,7 @@ class Player:
         self.pos[0]+=self.speed*self.direction[0]
         self.pos[1]+=self.speed*self.direction[1]
 
-        if(self.id==1):
+        if(self.id==1):									#player 1 bound to the left half od the arena
             if(self.pos[0]<=0):
                 self.pos[0]=0
             if(self.pos[0]>=GAME_WIDTH/2-PLAYER_WIDTH):
@@ -63,7 +63,7 @@ class Player:
             if(self.pos[1]>=GAME_HEIGHT-PLAYER_WIDTH):
                 self.pos[1]=GAME_HEIGHT-PLAYER_WIDTH
 
-        if (self.id==2):
+        if (self.id==2):								#player 2 confined to right half of the arena
             if(self.pos[0]<=GAME_WIDTH/2):
                 self.pos[0]=GAME_WIDTH/2
             if(self.pos[0]>=GAME_WIDTH-PLAYER_WIDTH):
@@ -76,12 +76,12 @@ class Player:
         if(self.BULLETFIRED):
             self.bullet.update()
             if(self.bullet.pos[0]<0 or self.bullet.pos[0]>GAME_WIDTH or self.bullet.pos[1]<0 or self.bullet.pos[1]>GAME_HEIGHT):
-                self.BULLETFIRED=False
+                self.BULLETFIRED=False					#if bullet is out of arena,put the bullet at rest at its resting position out of arena
 
     def fire_bullet(self):
         if(self.BULLETFIRED==False):
-            self.bullet.pos[0]=self.pos[0]#+PLAYER_WIDTH
-            self.bullet.pos[1]=self.pos[1]#+PLAYER_WIDTH/2
+            self.bullet.pos[0]=self.pos[0]
+            self.bullet.pos[1]=self.pos[1]
             self.bullet.direction[1]=self.direction[1]
             self.BULLETFIRED=True
 
@@ -94,7 +94,7 @@ class Game:
         self.GAME_OVER_FLAG=False
         self.font=pygame.font.SysFont("Consolas",20)
 
-    def render(self):
+    def render(self):									#displays everything
         self.screen.fill(BACKGROUND_COLOUR)
         pygame.draw.line(self.screen,SEPERATION_COLOUR,(GAME_WIDTH/2,0),(GAME_WIDTH/2,GAME_HEIGHT))
         self.display_scores()
@@ -102,7 +102,7 @@ class Game:
         self.p2.render()
         pygame.display.flip()
 
-    def get_input(self):
+    def get_input(self):								#reads input from user
         for event in pygame.event.get():
             if(event.type==pygame.QUIT or (event.type==KEYDOWN and event.key==K_ESCAPE)):
                 pygame.quit()
@@ -158,14 +158,14 @@ class Game:
         self.p1.update()
         self.p2.update()
 
-    def display_scores(self):
+    def display_scores(self):									#displays the health points on screen
         s1=self.font.render("HP:"+str(self.p1.hp),1,(100,0,0))
         self.screen.blit(s1,(10,10))
         s2=self.font.render("HP:"+str(self.p2.hp),1,(0,100,0))
         self.screen.blit(s2,(GAME_WIDTH-10-5*10-15,10))
 
 
-    def game_over_check(self):
+    def game_over_check(self):									#checks if any of the players run out of health
         if(self.p1.hp==0):
             self.GAME_OVER_FLAG=True
             print("GAME OVER!! PLAYER 2 WINS!!")
@@ -183,7 +183,7 @@ class Game:
                     f=self.font.render("GAME OVER!! PLAYER 2 WINS!!",1,(0,200,0))
                 else:
                     f=self.font.render("GAME OVER!! PLAYER 1 WINS!!",1,(200,0,0))
-                self.screen.blit(f,(0,0))#(GAME_WIDTH/2-100,GAME_HEIGHT/2))
+                self.screen.blit(f,(0,0))
 
 
 
