@@ -5,7 +5,7 @@ import sys
 class Bullet:
     def __init__(self,id,screen):
         self.id=id										#player id
-        self.speed=SPEED+1								#slightly greater speed than that of players			
+        self.speed=SPEED+1								#slightly greater speed than that of players
         self.direction=[0,0]							#initially at rest
         self.pos=[GAME_WIDTH+1,GAME_HEIGHT+1]			#starting position of of arena
         self.screen=screen
@@ -13,7 +13,7 @@ class Bullet:
             self.colour=PLAYER1_COLOUR
             self.direction[0]=1							#bullet moves rightwards from player 1
         if(self.id==2):
-            self.colour=PLAYER2_COLOUR					
+            self.colour=PLAYER2_COLOUR
             self.direction[0]=-1						#moves leftwards from player 2
 
     def render(self):									#displays the bullet
@@ -107,19 +107,19 @@ class Game:
             if(event.type==pygame.QUIT or (event.type==KEYDOWN and event.key==K_ESCAPE)):
                 pygame.quit()
                 sys.exit()
-            elif(event.type==KEYDOWN and self.GAME_OVER_FLAG==False):
+            elif(event.type==KEYDOWN and self.GAME_OVER_FLAG==False):   #start motion if key is pressed down
                 if(event.key==K_w):
                     self.p1.direction[1]=-1
-                    self.p1.direction[0]=0
+                    #self.p1.direction[0]=0
                 elif(event.key==K_a):
                     self.p1.direction[0]=-1
-                    self.p1.direction[1]=0
+                    #self.p1.direction[1]=0
                 elif(event.key==K_s):
                     self.p1.direction[1]=1
-                    self.p1.direction[0]=0
+                    #self.p1.direction[0]=0
                 elif(event.key==K_d):
                     self.p1.direction[0]=1
-                    self.p1.direction[1]=0
+                    #self.p1.direction[1]=0
                 elif(event.key==K_y):
                     self.p1.direction[0]=0
                     self.p1.direction[1]=0
@@ -127,21 +127,38 @@ class Game:
                     self.p1.fire_bullet()
                 elif(event.key==K_UP):
                     self.p2.direction[1]=-1
-                    self.p2.direction[0]=0
+                    #self.p2.direction[0]=0
                 elif(event.key==K_LEFT):
                     self.p2.direction[0]=-1
-                    self.p2.direction[1]=0
+                    #self.p2.direction[1]=0
                 elif(event.key==K_DOWN):
                     self.p2.direction[1]=1
-                    self.p2.direction[0]=0
+                    #self.p2.direction[0]=0
                 elif(event.key==K_RIGHT):
                     self.p2.direction[0]=1
-                    self.p2.direction[1]=0
+                    #self.p2.direction[1]=0
                 elif(event.key==K_KP5):
                     self.p2.direction[0]=0
                     self.p2.direction[1]=0
                 elif(event.key==K_KP4):
                     self.p2.fire_bullet()
+            elif(event.type==KEYUP and self.GAME_OVER_FLAG==False):         #stop motion if the key is released
+                if(event.key==K_w):
+                    self.p1.direction[1]=0
+                elif(event.key==K_a):
+                    self.p1.direction[0]=0
+                elif(event.key==K_s):
+                    self.p1.direction[1]=0
+                elif(event.key==K_d):
+                    self.p1.direction[0]=0
+                elif(event.key==K_UP):
+                    self.p2.direction[1]=0
+                elif(event.key==K_LEFT):
+                    self.p2.direction[0]=0
+                elif(event.key==K_DOWN):
+                    self.p2.direction[1]=0
+                elif(event.key==K_RIGHT):
+                    self.p2.direction[0]=0
 
     def update(self):
         if (self.p1.bullet.pos[0]>=self.p2.pos[0] and self.p1.bullet.pos[0]<=self.p2.pos[0]+PLAYER_WIDTH and self.p1.bullet.pos[1]>=self.p2.pos[1] and self.p1.bullet.pos[1]<=self.p2.pos[1]+PLAYER_WIDTH):
